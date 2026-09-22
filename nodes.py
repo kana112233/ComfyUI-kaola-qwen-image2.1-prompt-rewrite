@@ -46,6 +46,29 @@ class PresencePenalty(LogitsProcessor):
                 scores[b, generated.unique()] -= self.penalty
         return scores
 
+def get_model_list():
+    models = ["Qwen/Qwen-Image-2.1-PE-T2I", "Qwen/Qwen-Image-2.1-PE-I2I"]
+    
+    # 扫描本地可能的目录
+    search_dirs = []
+    if "text_encoders" in folder_paths.folder_names_and_paths:
+        search_dirs.extend(folder_paths.get_folder_paths("text_encoders"))
+    if "LLM" in folder_paths.folder_names_and_paths:
+        search_dirs.extend(folder_paths.get_folder_paths("LLM"))
+    if "clip" in folder_paths.folder_names_and_paths:
+        search_dirs.extend(folder_paths.get_folder_paths("clip"))
+        
+    for base_dir in search_dirs:
+        if os.path.exists(base_dir):
+            for item in os.listdir(base_dir):
+                item_path = os.path.join(base_dir, item)
+                # 检查是否为包含 config.json 的模型文件夹
+                if os.path.isdir(item_path) and os.path.exists(os.path.join(item_path, "config.json")):
+                    if item not in models:
+                        models.append(item)
+    
+    return models
+
 class Qwen2_1_PE_Loader:
     @classmethod
     def INPUT_TYPES(cls):
@@ -53,7 +76,7 @@ class Qwen2_1_PE_Loader:
         定义节点的输入参数
         """
         return {"required": {
-            "model_path": ("STRING", {"default": "Qwen/Qwen-Image-2.1-PE-T2I"}),
+            "model_path": (get_model_list(), ),
             "dtype": (["bfloat16", "float16", "float32"], {"default": "bfloat16"}),
             "device": (["cuda", "cpu"], {"default": "cuda"}),
         }}

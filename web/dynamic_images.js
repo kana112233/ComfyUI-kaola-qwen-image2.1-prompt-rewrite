@@ -10,6 +10,8 @@ app.registerExtension({
 
             // Define the dynamic inputs logic
             nodeType.prototype.updateImageInputs = function () {
+                if (!this.inputs) return;
+                
                 // Find all inputs that start with 'image_'
                 let imageInputs = [];
                 for (let i = 0; i < this.inputs.length; i++) {
@@ -58,6 +60,8 @@ app.registerExtension({
                     onNodeCreated.apply(this, arguments);
                 }
                 
+                if (!this.inputs) return;
+
                 // When node is created, first hide all image inputs except image_1
                 let imageInputs = [];
                 for (let i = 0; i < this.inputs.length; i++) {
