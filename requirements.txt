@@ -1,0 +1,4 @@
+transformers>=4.45.0
+json-repair
+torch
+Pillow
