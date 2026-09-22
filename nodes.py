@@ -208,7 +208,23 @@ class Qwen2_1_PE_Rewrite:
         if presence_penalty:
             processors.append(PresencePenalty(presence_penalty, prompt_len))
 
+        # Add streamer so it prints to the terminal console and updates ComfyUI progress bar
+        from transformers import TextStreamer
+        import comfy.utils
+        
+        class ComfyProgressBarStreamer(TextStreamer):
+            def __init__(self, tokenizer, max_new_tokens, skip_prompt=False, **decode_kwargs):
+                super().__init__(tokenizer, skip_prompt, **decode_kwargs)
+                self.pbar = comfy.utils.ProgressBar(max_new_tokens)
+                
+            def put(self, value):
+                super().put(value)
+                self.pbar.update(1)
+                
+        streamer = ComfyProgressBarStreamer(processor.tokenizer, max_new_tokens=max_new_tokens, skip_prompt=True, skip_special_tokens=True)
+
         torch.manual_seed(seed)
+        print("====== Qwen 2.1 Prompt Enhancer is Thinking... ======")
         out = model.generate(
             **inputs,
             max_new_tokens=max_new_tokens,
@@ -218,7 +234,9 @@ class Qwen2_1_PE_Rewrite:
             top_k=top_k if temperature > 0 else None,
             logits_processor=processors,
             pad_token_id=processor.tokenizer.eos_token_id,
+            streamer=streamer,
         )
+        print("\n====== Generation Complete ======")
         
         text = processor.tokenizer.decode(out[0, prompt_len:], skip_special_tokens=True)
         thinking, answer = split_thinking(text)
