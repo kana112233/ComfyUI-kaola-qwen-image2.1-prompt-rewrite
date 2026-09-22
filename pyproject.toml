@@ -1,0 +1,28 @@
+[project]
+name = "comfyui-kaola-qwen-image2.1-prompt-rewrite"
+description = "A custom node for ComfyUI that integrates Qwen 2.1 prompt rewriting for t2i and image editing"
+version = "0.0.1"
+license = { text = "MIT" }
+authors = [
+    { name = "kana112233", email = "ooo@bbb.com" }
+]
+readme = "README.md"
+dependencies = [
+    "torch",
+    "numpy",
+    "Pillow",
+    "transformers",
+    "json-repair"
+]
+
+[project.urls]
+Repository = "https://github.com/kana112233/ComfyUI-kaola-qwen-image2.1-prompt-rewrite"
+
+[tool.comfy]
+PublisherId = "kana112233"
+DisplayName = "ComfyUI Kaola Qwen Image2.1 Prompt Rewrite"
+Icon = ""
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
