@@ -15,7 +15,7 @@
         {"name": "QWEN_PE_MODEL", "type": "QWEN_PE_MODEL", "links": [4], "shape": 3}
       ],
       "properties": {"Node name for S&R": "Qwen2_1_PE_Loader"},
-      "widgets_values": ["Qwen/Qwen-Image-2.1-PE-T2I", "bfloat16", "cuda"]
+      "widgets_values": ["Qwen/Qwen-Image-2.1-PE-T2I (Auto Download)", "bfloat16", "cuda"]
     },
     {
       "id": 5,

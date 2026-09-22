@@ -47,7 +47,7 @@ class PresencePenalty(LogitsProcessor):
         return scores
 
 def get_model_list():
-    models = ["Qwen/Qwen-Image-2.1-PE-T2I", "Qwen/Qwen-Image-2.1-PE-I2I"]
+    models = ["Qwen/Qwen-Image-2.1-PE-T2I (Auto Download)", "Qwen/Qwen-Image-2.1-PE-I2I (Auto Download)"]
     
     # 扫描本地可能的目录
     search_dirs = []
@@ -64,8 +64,9 @@ def get_model_list():
                 item_path = os.path.join(base_dir, item)
                 # 检查是否为包含 config.json 的模型文件夹
                 if os.path.isdir(item_path) and os.path.exists(os.path.join(item_path, "config.json")):
-                    if item not in models:
-                        models.append(item)
+                    display_name = f"{item} (on disk)"
+                    if display_name not in models and item not in [m.split(" (Auto Download)")[0] for m in models]:
+                        models.append(display_name)
     
     return models
 
@@ -88,6 +89,14 @@ class Qwen2_1_PE_Loader:
     def load(self, model_path, dtype, device):
         dtype_map = {"bfloat16": torch.bfloat16, "float16": torch.float16, "float32": torch.float32}
         
+        # Strip the auto download suffix if present
+        if model_path.endswith(" (Auto Download)"):
+            model_path = model_path.split(" (Auto Download)")[0]
+            
+        # Strip the on disk suffix if present
+        if model_path.endswith(" (on disk)"):
+            model_path = model_path.split(" (on disk)")[0]
+            
         # Resolve path against models dir if it's a relative local path
         if not os.path.isabs(model_path) and not "/" in model_path and not "\\" in model_path:
             search_paths = []
