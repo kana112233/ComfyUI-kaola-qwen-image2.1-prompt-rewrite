@@ -51,12 +51,10 @@ def get_model_list():
     
     # 扫描本地可能的目录
     search_dirs = []
-    if "text_encoders" in folder_paths.folder_names_and_paths:
-        search_dirs.extend(folder_paths.get_folder_paths("text_encoders"))
     if "LLM" in folder_paths.folder_names_and_paths:
         search_dirs.extend(folder_paths.get_folder_paths("LLM"))
-    if "clip" in folder_paths.folder_names_and_paths:
-        search_dirs.extend(folder_paths.get_folder_paths("clip"))
+    else:
+        search_dirs.append(os.path.join(folder_paths.models_dir, "LLM"))
         
     for base_dir in search_dirs:
         if os.path.exists(base_dir):
@@ -77,7 +75,7 @@ class Qwen2_1_PE_Loader:
         定义节点的输入参数
         """
         return {"required": {
-            "model_path": (get_model_list(), {"tooltip": "Select model. '(Auto Download)' will download from HuggingFace, '(on disk)' uses local cache."}),
+            "model_path": (get_model_list(), {"tooltip": "Select model. '(Auto Download)' downloads from HuggingFace. '(on disk)' scans models/LLM directory."}),
             "dtype": (["bfloat16", "float16", "float32"], {"default": "bfloat16", "tooltip": "Model precision. bfloat16 is highly recommended for Qwen."}),
             "device": (["cuda", "cpu"], {"default": "cuda", "tooltip": "Compute device (cuda for GPU, cpu for CPU RAM)."}),
         }}
@@ -100,14 +98,10 @@ class Qwen2_1_PE_Loader:
         # Resolve path against models dir if it's a relative local path
         if not os.path.isabs(model_path) and not "/" in model_path and not "\\" in model_path:
             search_paths = []
-            if "text_encoders" in folder_paths.folder_names_and_paths:
-                search_paths.extend(folder_paths.get_folder_paths("text_encoders"))
             if "LLM" in folder_paths.folder_names_and_paths:
                 search_paths.extend(folder_paths.get_folder_paths("LLM"))
             else:
                 search_paths.append(os.path.join(folder_paths.models_dir, "LLM"))
-            if "clip" in folder_paths.folder_names_and_paths:
-                search_paths.extend(folder_paths.get_folder_paths("clip"))
                 
             for base_dir in search_paths:
                 potential_path = os.path.join(base_dir, model_path)
