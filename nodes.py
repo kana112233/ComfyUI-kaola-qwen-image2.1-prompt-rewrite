@@ -77,9 +77,9 @@ class Qwen2_1_PE_Loader:
         定义节点的输入参数
         """
         return {"required": {
-            "model_path": (get_model_list(), ),
-            "dtype": (["bfloat16", "float16", "float32"], {"default": "bfloat16"}),
-            "device": (["cuda", "cpu"], {"default": "cuda"}),
+            "model_path": (get_model_list(), {"tooltip": "Select model. '(Auto Download)' will download from HuggingFace, '(on disk)' uses local cache."}),
+            "dtype": (["bfloat16", "float16", "float32"], {"default": "bfloat16", "tooltip": "Model precision. bfloat16 is highly recommended for Qwen."}),
+            "device": (["cuda", "cpu"], {"default": "cuda", "tooltip": "Compute device (cuda for GPU, cpu for CPU RAM)."}),
         }}
     
     RETURN_TYPES = ("QWEN_PE_MODEL",)
@@ -128,16 +128,16 @@ class Qwen2_1_PE_Rewrite:
         定义节点的输入参数
         """
         return {"required": {
-            "qwen_pe_model": ("QWEN_PE_MODEL",),
-            "task": (["t2i", "edit"], {"default": "t2i"}),
-            "system_prompt_file": (get_prompt_files(),),
-            "prompt": ("STRING", {"multiline": True}),
-            "temperature": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 2.0, "step": 0.01}),
-            "top_p": ("FLOAT", {"default": 0.95, "min": 0.0, "max": 1.0, "step": 0.01}),
-            "top_k": ("INT", {"default": 20, "min": 0, "max": 100}),
-            "presence_penalty": ("FLOAT", {"default": 1.5, "min": 0.0, "max": 2.0, "step": 0.01}),
-            "max_new_tokens": ("INT", {"default": 16256, "min": 1, "max": 32768}),
-            "seed": ("INT", {"default": 42, "min": 0, "max": 0xffffffffffffffff}),
+            "qwen_pe_model": ("QWEN_PE_MODEL", {"tooltip": "Connect the loaded model from Qwen2.1 PE Loader."}),
+            "task": (["t2i", "edit"], {"default": "t2i", "tooltip": "Task type: 't2i' for text-to-image prompt expansion, 'edit' for image-based rewriting."}),
+            "system_prompt_file": (get_prompt_files(), {"tooltip": "System prompt template file located in ComfyUI/models/LLM/prompts/."}),
+            "prompt": ("STRING", {"multiline": True, "tooltip": "Enter the short prompt or instruction you want to enhance."}),
+            "temperature": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 2.0, "step": 0.01, "tooltip": "Controls randomness. Lower values make output more deterministic, higher values increase creativity."}),
+            "top_p": ("FLOAT", {"default": 0.95, "min": 0.0, "max": 1.0, "step": 0.01, "tooltip": "Nucleus sampling threshold. Restricts the vocabulary selection range."}),
+            "top_k": ("INT", {"default": 20, "min": 0, "max": 100, "tooltip": "Limits vocabulary to the top K most likely tokens."}),
+            "presence_penalty": ("FLOAT", {"default": 1.5, "min": 0.0, "max": 2.0, "step": 0.01, "tooltip": "Penalizes repeated words. Higher values prevent the model from getting stuck in loops."}),
+            "max_new_tokens": ("INT", {"default": 16256, "min": 1, "max": 32768, "tooltip": "Max generation length. Keep this large because the model outputs a long <think> reasoning process."}),
+            "seed": ("INT", {"default": 42, "min": 0, "max": 0xffffffffffffffff, "tooltip": "Random seed. Fixed seeds produce identical deterministic results."}),
         }, "optional": {
             "image_1": ("IMAGE",),
             "image_2": ("IMAGE",),
