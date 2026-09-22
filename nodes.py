@@ -111,17 +111,18 @@ class Qwen2_1_PE_Rewrite:
         images = []
         if task == "edit" and image is not None:
             # ComfyUI image is typically [B, H, W, C] in float32 (0.0 to 1.0)
-            img = image[0].cpu().numpy() * 255.0
-            img = img.astype(np.uint8)
-            pil_img = Image.fromarray(img)
-            
-            # Max pixels check
-            max_pixels = profile["image_max_pixels"]
-            w, h = pil_img.size
-            if max_pixels and w * h > max_pixels:
-                s = (max_pixels / float(w * h)) ** 0.5
-                pil_img = pil_img.resize((max(1, int(w * s)), max(1, int(h * s))), Image.LANCZOS)
-            images.append(pil_img)
+            for i in range(image.shape[0]):
+                img = image[i].cpu().numpy() * 255.0
+                img = img.astype(np.uint8)
+                pil_img = Image.fromarray(img)
+                
+                # Max pixels check
+                max_pixels = profile["image_max_pixels"]
+                w, h = pil_img.size
+                if max_pixels and w * h > max_pixels:
+                    s = (max_pixels / float(w * h)) ** 0.5
+                    pil_img = pil_img.resize((max(1, int(w * s)), max(1, int(h * s))), Image.LANCZOS)
+                images.append(pil_img)
             
         # Build messages
         user_content = []
