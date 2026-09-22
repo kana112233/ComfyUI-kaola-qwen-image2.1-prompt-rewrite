@@ -48,7 +48,10 @@ class PresencePenalty(LogitsProcessor):
 
 class Qwen2_1_PE_Loader:
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
+        """
+        定义节点的输入参数
+        """
         return {"required": {
             "model_path": ("STRING", {"default": "Qwen/Qwen-Image-2.1-PE-T2I"}),
             "dtype": (["bfloat16", "float16", "float32"], {"default": "bfloat16"}),
@@ -77,7 +80,10 @@ class Qwen2_1_PE_Loader:
 
 class Qwen2_1_PE_Rewrite:
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
+        """
+        定义节点的输入参数
+        """
         return {"required": {
             "qwen_pe_model": ("QWEN_PE_MODEL",),
             "task": (["t2i", "edit"], {"default": "t2i"}),
