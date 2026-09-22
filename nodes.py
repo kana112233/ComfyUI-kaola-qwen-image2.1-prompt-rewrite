@@ -65,12 +65,23 @@ class Qwen2_1_PE_Loader:
     def load(self, model_path, dtype, device):
         dtype_map = {"bfloat16": torch.bfloat16, "float16": torch.float16, "float32": torch.float32}
         
-        # Resolve path against LLM models dir if it's a relative local path
+        # Resolve path against models dir if it's a relative local path
         if not os.path.isabs(model_path) and not "/" in model_path and not "\\" in model_path:
-            llm_models_dir = os.path.join(folder_paths.models_dir, "LLM")
-            potential_path = os.path.join(llm_models_dir, model_path)
-            if os.path.exists(potential_path):
-                model_path = potential_path
+            search_paths = []
+            if "text_encoders" in folder_paths.folder_names_and_paths:
+                search_paths.extend(folder_paths.get_folder_paths("text_encoders"))
+            if "LLM" in folder_paths.folder_names_and_paths:
+                search_paths.extend(folder_paths.get_folder_paths("LLM"))
+            else:
+                search_paths.append(os.path.join(folder_paths.models_dir, "LLM"))
+            if "clip" in folder_paths.folder_names_and_paths:
+                search_paths.extend(folder_paths.get_folder_paths("clip"))
+                
+            for base_dir in search_paths:
+                potential_path = os.path.join(base_dir, model_path)
+                if os.path.exists(potential_path):
+                    model_path = potential_path
+                    break
 
         processor = AutoProcessor.from_pretrained(model_path)
         model = AutoModelForImageTextToText.from_pretrained(
