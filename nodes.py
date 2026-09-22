@@ -96,7 +96,15 @@ class Qwen2_1_PE_Rewrite:
             "max_new_tokens": ("INT", {"default": 16256, "min": 1, "max": 32768}),
             "seed": ("INT", {"default": 42, "min": 0, "max": 0xffffffffffffffff}),
         }, "optional": {
-            "image": ("IMAGE",),
+            "image_1": ("IMAGE",),
+            "image_2": ("IMAGE",),
+            "image_3": ("IMAGE",),
+            "image_4": ("IMAGE",),
+            "image_5": ("IMAGE",),
+            "image_6": ("IMAGE",),
+            "image_7": ("IMAGE",),
+            "image_8": ("IMAGE",),
+            "image_9": ("IMAGE",),
         }}
 
     RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING")
@@ -105,7 +113,7 @@ class Qwen2_1_PE_Rewrite:
     CATEGORY = "Qwen2.1"
 
     @torch.inference_mode()
-    def rewrite(self, qwen_pe_model, task, system_prompt_file, prompt, temperature, top_p, top_k, presence_penalty, max_new_tokens, seed, image=None):
+    def rewrite(self, qwen_pe_model, task, system_prompt_file, prompt, temperature, top_p, top_k, presence_penalty, max_new_tokens, seed, **kwargs):
         model = qwen_pe_model["model"]
         processor = qwen_pe_model["processor"]
         device = qwen_pe_model["device"]
@@ -115,20 +123,28 @@ class Qwen2_1_PE_Rewrite:
         
         # Format image
         images = []
-        if task == "edit" and image is not None:
-            # ComfyUI image is typically [B, H, W, C] in float32 (0.0 to 1.0)
-            for i in range(image.shape[0]):
-                img = image[i].cpu().numpy() * 255.0
-                img = img.astype(np.uint8)
-                pil_img = Image.fromarray(img)
-                
-                # Max pixels check
-                max_pixels = profile["image_max_pixels"]
-                w, h = pil_img.size
-                if max_pixels and w * h > max_pixels:
-                    s = (max_pixels / float(w * h)) ** 0.5
-                    pil_img = pil_img.resize((max(1, int(w * s)), max(1, int(h * s))), Image.LANCZOS)
-                images.append(pil_img)
+        if task == "edit":
+            # 收集所有传入的 image_X
+            input_images = []
+            for i in range(1, 10):
+                img_key = f"image_{i}"
+                if img_key in kwargs and kwargs[img_key] is not None:
+                    input_images.append(kwargs[img_key])
+            
+            for img_tensor in input_images:
+                # 处理可能存在的批次
+                for i in range(img_tensor.shape[0]):
+                    img = img_tensor[i].cpu().numpy() * 255.0
+                    img = img.astype(np.uint8)
+                    pil_img = Image.fromarray(img)
+                    
+                    # Max pixels check
+                    max_pixels = profile["image_max_pixels"]
+                    w, h = pil_img.size
+                    if max_pixels and w * h > max_pixels:
+                        s = (max_pixels / float(w * h)) ** 0.5
+                        pil_img = pil_img.resize((max(1, int(w * s)), max(1, int(h * s))), Image.LANCZOS)
+                    images.append(pil_img)
             
         # Build messages
         user_content = []

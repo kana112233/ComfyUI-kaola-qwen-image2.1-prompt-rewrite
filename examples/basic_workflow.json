@@ -1,5 +1,5 @@
 {
-  "last_node_id": 8,
+  "last_node_id": 7,
   "last_link_id": 9,
   "nodes": [
     {
@@ -35,29 +35,12 @@
       "widgets_values": ["example2.png", "image"]
     },
     {
-      "id": 3,
-      "type": "ImageBatch",
-      "pos": [450, 250],
-      "size": [315, 58],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [
-        {"name": "image1", "type": "IMAGE", "link": 1},
-        {"name": "image2", "type": "IMAGE", "link": 2}
-      ],
-      "outputs": [
-        {"name": "IMAGE", "type": "IMAGE", "links": [3], "shape": 3}
-      ],
-      "properties": {"Node name for S&R": "ImageBatch"}
-    },
-    {
       "id": 4,
       "type": "Qwen2_1_PE_Loader",
       "pos": [450, 100],
       "size": [315, 82],
       "flags": {},
-      "order": 3,
+      "order": 2,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -72,11 +55,12 @@
       "pos": [800, 200],
       "size": [350, 260],
       "flags": {},
-      "order": 4,
+      "order": 3,
       "mode": 0,
       "inputs": [
         {"name": "qwen_pe_model", "type": "QWEN_PE_MODEL", "link": 4},
-        {"name": "image", "type": "IMAGE", "link": 3}
+        {"name": "image_1", "type": "IMAGE", "link": 1},
+        {"name": "image_2", "type": "IMAGE", "link": 2}
       ],
       "outputs": [
         {"name": "positive_prompt", "type": "STRING", "links": [6], "shape": 3},
@@ -93,7 +77,7 @@
       "pos": [1200, 200],
       "size": [300, 200],
       "flags": {},
-      "order": 5,
+      "order": 4,
       "mode": 0,
       "inputs": [
         {"name": "text", "type": "STRING", "link": 6, "widget": {"name": "text"}}
@@ -108,7 +92,7 @@
       "pos": [1200, 450],
       "size": [300, 200],
       "flags": {},
-      "order": 6,
+      "order": 5,
       "mode": 0,
       "inputs": [
         {"name": "text", "type": "STRING", "link": 9, "widget": {"name": "text"}}
@@ -119,9 +103,8 @@
     }
   ],
   "links": [
-    [1, 1, 0, 3, 0, "IMAGE"],
-    [2, 2, 0, 3, 1, "IMAGE"],
-    [3, 3, 0, 5, 1, "IMAGE"],
+    [1, 1, 0, 5, 1, "IMAGE"],
+    [2, 2, 0, 5, 2, "IMAGE"],
     [4, 4, 0, 5, 0, "QWEN_PE_MODEL"],
     [6, 5, 0, 6, 0, "STRING"],
     [9, 5, 3, 7, 0, "STRING"]
