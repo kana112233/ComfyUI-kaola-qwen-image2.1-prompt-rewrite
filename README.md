@@ -25,6 +25,7 @@ This node relies on standard HuggingFace directory formats, **NOT** single `.saf
 1. Go to HuggingFace or ModelScope to download the full repository:
    - For T2I (Text-only prompt enhancement): [Qwen/Qwen-Image-2.1-PE-T2I](https://huggingface.co/Qwen/Qwen-Image-2.1-PE-T2I)
    - For I2I (Image reference prompt rewrite): [Qwen/Qwen-Image-2.1-PE-I2I](https://huggingface.co/Qwen/Qwen-Image-2.1-PE-I2I)
+   - Uncensored I2I (Abliterated, community version): [base11231/Qwen-Image-2.1-PE-I2I-Abliterated](https://huggingface.co/base11231/Qwen-Image-2.1-PE-I2I-Abliterated)
 2. Create a folder named after the model (e.g. `Qwen-Image-2.1-PE-I2I`) in your `ComfyUI/models/LLM` directory.
 3. Put **all downloaded files** (including `config.json`, `tokenizer.json`, etc.) into this newly created folder.
 
@@ -56,6 +57,7 @@ pip install -r requirements.txt
 1. 前往 HuggingFace 或魔搭社区 (ModelScope) 下载完整的模型仓库里的所有文件：
    - 纯文本提示词扩写模型：[Qwen/Qwen-Image-2.1-PE-T2I](https://modelscope.cn/models/qwen/Qwen-Image-2.1-PE-T2I)
    - 图像编辑重写模型：[Qwen/Qwen-Image-2.1-PE-I2I](https://modelscope.cn/models/qwen/Qwen-Image-2.1-PE-I2I)
+   - 无审查 I2I 模型（社区破限版）：[base11231/Qwen-Image-2.1-PE-I2I-Abliterated](https://huggingface.co/base11231/Qwen-Image-2.1-PE-I2I-Abliterated)
 2. 在你的 `ComfyUI/models/LLM` 目录下，新建一个模型文件夹（例如 `Qwen-Image-2.1-PE-I2I`）。
 3. 将下载的**所有文件**（包含 `config.json`, `tokenizer.json` 等全部文件）放进该文件夹中。
 

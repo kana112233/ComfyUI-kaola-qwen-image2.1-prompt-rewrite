@@ -47,7 +47,11 @@ class PresencePenalty(LogitsProcessor):
         return scores
 
 def get_model_list():
-    models = ["Qwen/Qwen-Image-2.1-PE-T2I (Auto Download)", "Qwen/Qwen-Image-2.1-PE-I2I (Auto Download)"]
+    models = [
+        "Qwen/Qwen-Image-2.1-PE-T2I (Auto Download)", 
+        "Qwen/Qwen-Image-2.1-PE-I2I (Auto Download)",
+        "base11231/Qwen-Image-2.1-PE-I2I-Abliterated (Auto Download)"
+    ]
     
     # 扫描本地可能的目录
     search_dirs = []
