@@ -238,11 +238,20 @@ class Qwen2_1_PE_Rewrite:
         class ComfyProgressBarStreamer(TextStreamer):
             def __init__(self, tokenizer, max_new_tokens, skip_prompt=False, **decode_kwargs):
                 super().__init__(tokenizer, skip_prompt, **decode_kwargs)
+                self.max_tokens = max_new_tokens
                 self.pbar = comfy.utils.ProgressBar(max_new_tokens)
+                self.current = 0
                 
             def put(self, value):
                 super().put(value)
-                self.pbar.update(1)
+                num_tokens = value.shape[-1] if hasattr(value, "shape") else 1
+                self.pbar.update(num_tokens)
+                self.current += num_tokens
+
+            def end(self):
+                super().end()
+                if self.current < self.max_tokens:
+                    self.pbar.update(self.max_tokens - self.current)
                 
         streamer = ComfyProgressBarStreamer(processor.tokenizer, max_new_tokens=max_new_tokens, skip_prompt=True, skip_special_tokens=True)
 
