@@ -25,6 +25,18 @@ PROFILES = {
         "presence_penalty": 0.0,
         "max_new_tokens": 24000,
         "image_max_pixels": 1024 * 1024
+    },
+    "caption": {
+        "name": "caption",
+        "takes_images": True,
+        "has_ratio_follow": False,
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "top_k": 20,
+        "min_p": 0.0,
+        "presence_penalty": 0.0,
+        "max_new_tokens": 16256,
+        "image_max_pixels": 1024 * 1024
     }
 }
 

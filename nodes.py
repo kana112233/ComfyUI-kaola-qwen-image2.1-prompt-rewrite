@@ -15,23 +15,39 @@ if not os.path.exists(llm_prompts_dir):
     except Exception:
         pass
 
+# Also look in the repository's prompts folder
+repo_prompts_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "prompts")
+if not os.path.exists(repo_prompts_dir):
+    os.makedirs(repo_prompts_dir, exist_ok=True)
+
 def get_prompt_files():
-    if not os.path.exists(llm_prompts_dir):
-        return ["default"]
+    files = set()
+    if os.path.exists(llm_prompts_dir):
+        files.update([f for f in os.listdir(llm_prompts_dir) if f.endswith('.txt')])
+    if os.path.exists(repo_prompts_dir):
+        files.update([f for f in os.listdir(repo_prompts_dir) if f.endswith('.txt')])
     
-    files = [f for f in os.listdir(llm_prompts_dir) if f.endswith('.txt')]
-    if not files:
+    files_list = list(files)
+    if not files_list:
         return ["default"]
-    return files
+    return sorted(files_list)
 
 def read_prompt_file(filename):
     if filename == "default" or not filename:
         return "You are a prompt enhancer..."
     
+    # Try user models dir first
     filepath = os.path.join(llm_prompts_dir, filename)
     if os.path.exists(filepath):
         with open(filepath, "r", encoding="utf-8") as f:
             return f.read().strip()
+            
+    # Then try repo dir
+    filepath_repo = os.path.join(repo_prompts_dir, filename)
+    if os.path.exists(filepath_repo):
+        with open(filepath_repo, "r", encoding="utf-8") as f:
+            return f.read().strip()
+            
     return "You are a prompt enhancer..."
 
 class PresencePenalty(LogitsProcessor):
@@ -127,9 +143,9 @@ class Qwen2_1_PE_Rewrite:
         """
         return {"required": {
             "qwen_pe_model": ("QWEN_PE_MODEL", {"tooltip": "Connect the loaded model from Qwen2.1 PE Loader."}),
-            "task": (["t2i", "edit"], {"default": "t2i", "tooltip": "Task type: 't2i' for text-to-image prompt expansion, 'edit' for image-based rewriting."}),
+            "task": (["t2i", "edit", "caption"], {"default": "t2i", "tooltip": "Task type: 't2i' for text-to-image expansion, 'edit' for image-based rewriting, 'caption' for reverse engineering image to prompt."}),
             "system_prompt_file": (get_prompt_files(), {"tooltip": "System prompt template file located in ComfyUI/models/LLM/prompts/."}),
-            "prompt": ("STRING", {"multiline": True, "tooltip": "Enter the short prompt or instruction you want to enhance."}),
+            "prompt": ("STRING", {"multiline": True, "tooltip": "Enter the short prompt or instruction you want to enhance. (For 'caption', this can be left empty or set to 'Reverse engineer this image'.)"}),
             "temperature": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 2.0, "step": 0.01, "tooltip": "Controls randomness. Lower values make output more deterministic, higher values increase creativity."}),
             "top_p": ("FLOAT", {"default": 0.95, "min": 0.0, "max": 1.0, "step": 0.01, "tooltip": "Nucleus sampling threshold. Restricts the vocabulary selection range."}),
             "top_k": ("INT", {"default": 20, "min": 0, "max": 100, "tooltip": "Limits vocabulary to the top K most likely tokens."}),
@@ -164,7 +180,7 @@ class Qwen2_1_PE_Rewrite:
         
         # Format image
         images = []
-        if task == "edit":
+        if task in ["edit", "caption"]:
             # 收集所有传入的 image_X
             input_images = []
             for i in range(1, 10):

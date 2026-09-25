@@ -33,6 +33,7 @@ This node relies on standard HuggingFace directory formats, **NOT** single `.saf
 Restart ComfyUI and load the workflow files from the `examples` folder:
 - **`t2i_prompt_enhancer_workflow.json`**: Pure text prompt expansion.
 - **`i2i_edit_workflow.json`**: Image-based prompt editing (dynamically supports 1-9 images).
+- **`i2t_caption_workflow.json`**: Reverse engineering image to prompt (extracts detailed prompt from an image).
 
 *Note: This model uses the newest `qwen3_5` architecture. Ensure your `transformers` package is updated to the latest git branch as specified in `requirements.txt` (`pip install git+https://github.com/huggingface/transformers.git`).*
 
