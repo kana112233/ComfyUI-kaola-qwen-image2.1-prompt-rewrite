@@ -1,7 +1,7 @@
 [project]
 name = "comfyui-kaola-qwen-image2.1-prompt-rewrite"
 description = "A custom node for ComfyUI that integrates Qwen 2.1 prompt rewriting for t2i and image editing"
-version = "0.0.1"
+version = "0.0.2"
 license = { text = "MIT" }
 dependencies = [
     "torch",
